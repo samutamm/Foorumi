@@ -19,6 +19,7 @@ FoorumApp.service('Api', function($http){
   }
   this.addMessage = function(message, topicId){
     // Lisää annettu viesti lähettämällä POST-pyyntö toteuttamasi Api:n polkuun /topics/:topicId/message
+    return $http.post('/topics/'+topicId+'/message', message);
   }
 
   // Vastausten Api-funktiot
