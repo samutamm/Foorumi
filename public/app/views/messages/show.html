@@ -27,13 +27,14 @@
     </div>
   </li>
 </ul>
+<div ng-if="userLoggedIn">
+  <h2>Lisää oma vastauksesi</h2>
 
-<h2>Lisää oma vastauksesi</h2>
-
-<form>
-  <div class="form-group">
-    <label>Vastaus</label>
-    <textarea ng-model="reply.content" class="form-control"></textarea>
-  </div>
-  <button ng-click="addReply(reply)" class="btn btn-success">Lisää vastaus</button>
-</form>
+  <form>
+    <div class="form-group">
+      <label>Vastaus</label>
+      <textarea ng-model="reply.content" class="form-control"></textarea>
+    </div>
+    <button ng-click="addReply(reply)" class="btn btn-success">Lisää vastaus</button>
+  </form>
+</div>

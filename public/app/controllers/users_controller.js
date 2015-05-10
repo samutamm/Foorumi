@@ -13,6 +13,13 @@ FoorumApp.controller('UsersController', function($scope, $location, Api){
     }
 
     $scope.register = function(userCredentials) {
-      console.log("hep! ");
+      Api.register(userCredentials)
+      .success(function() {
+        $location.path('/');
+      })
+      .error(function() {
+        $scope.errorMessage = 'Käyttäjätunnus on jo käytössä.'
+        $scope.newUser = {};
+      });
     }
 });
