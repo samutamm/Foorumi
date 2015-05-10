@@ -29,7 +29,7 @@ router.get('/:id', function(req, res, next) {
 });
 
 // POST /topics
-router.post('/', function(req, res, next) {
+router.post('/', authentication, function(req, res, next) {
   // Lisää tämä aihealue
   var topicToAdd = req.body;
   Models.Topic.create(topicToAdd).then(function(newTopic) {
