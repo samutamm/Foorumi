@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var Models = require('../models');
+var bcrypt = require('bcrypt');
 
 // Huom! Kaikki polut alkavat polulla /users
 
@@ -9,8 +10,32 @@ var Models = require('../models');
 router.post('/', function(req, res, next){
   // Lisää tämä käyttäjä (Vinkki: create), muista kuitenkin sitä ennen varmistaa, että käyttäjänimi ei ole jo käytössä! (Vinkki: findOne)
   var userToAdd = req.body;
+  if (userToAdd.username == null || userToAdd.password == null) {
+    res.status(400).json({ error: 'Ei voida lisätä tyhjää salasanaa tai käyttäjätunnusta.' });
+  }
+
+  Models.User.findOne({
+    where: { username: userToAdd.username }
+  }).then(function(user){
+    if (user) {
+      res.status(400).json({ error: 'Käyttäjätunnus on jo käytössä!' });
+    } else {
+      var unCyptedPassword = userToAdd.password;
+
+      bcrypt.genSalt(10, function(err, salt) {
+        bcrypt.hash(unCyptedPassword, salt, function(err, hash) {
+
+          userToAdd.password = hash;
+
+          Models.User.create(userToAdd).then(function(newUser) {
+            res.json(newUser);
+          });
+
+        });
+      });
+    }
+  });
   // Palauta vastauksena lisätty käyttäjä
-  res.send(200);
 });
 
 // POST /users/authenticate
@@ -24,13 +49,18 @@ router.post('/authenticate', function(req, res, next){
 
   Models.User.findOne({
     where: {
-      username: userToCheck.username,
-      password: userToCheck.password
+      username: userToCheck.username
     }
   }).then(function(user){
     if(user){
-      req.session.userId = user.id;
-      res.json(user)
+      bcrypt.compare(userToCheck.password, user.password, function(err, result) {
+        if (result) {
+          req.session.userId = user.id;
+          res.json(user)
+        } else {
+          res.sendStatus(403);
+        }
+      })
     }else{
       res.send(403);
     }
@@ -45,9 +75,16 @@ router.get('/logged-in', function(req, res, next){
     res.json({});
   }else{
     // Hae käyttäjä loggedInId-muuttujan arvon perusteella (Vinkki: findOne)
+    Models.User.findOne({
+      where: {id: loggedInId}
+    }).then(function(user){
+      if (user) {
+        res.json(user);
+      } else {
+        res.json({});
+      }
+    });
   }
-
-  res.send(200);
 });
 
 // GET /users/logout
