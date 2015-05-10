@@ -21,7 +21,10 @@ router.get('/:id', function(req, res, next) {
   Models.Topic.findOne({
     where: {id: topicId},
     include: {
-      model: Models.Message
+      model: Models.Message,
+      include: {
+        model: Models.User
+      }
     }
   }).then(function(topic){
     res.json(topic);
@@ -46,6 +49,7 @@ router.post('/:id/message', function(req, res, next) {
   // ...tämä viesti (Vinkki: lisää ensin messageToAdd-objektiin kenttä TopicId, jonka arvo on topicId-muuttujan arvo ja käytä sen jälkeen create-funktiota)
   var messageToAdd = req.body;
   messageToAdd.TopicId = topicId;
+  messageToAdd.UserId = req.session.userId;
   Models.Message.create(messageToAdd).then(function(newMessage){
     res.send(newMessage);
   });

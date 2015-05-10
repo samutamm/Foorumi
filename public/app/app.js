@@ -1,4 +1,4 @@
-var FoorumApp = angular.module('FoorumApp', ['ngRoute']);
+var FoorumApp = angular.module('FoorumApp', ['ngRoute', 'validation.match']);
 
 FoorumApp.config(function($routeProvider){
   $routeProvider

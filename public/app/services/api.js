@@ -32,6 +32,7 @@ FoorumApp.service('Api', function($http){
   // Käyttäjän Api-funktiot
   this.login = function(user){
     // Tarkista käyttäjän kirjautuminen lähettämällä POST-pyyntö toteuttamasi Api:n polkuun /users/authenticate
+    return $http.post('/users/authenticate', user);
   }
   this.register = function(user){
     // Lisää annettu käyttäjä lähettämällä POST-pyyntö toteuttamasi Api:n polkuun /users
